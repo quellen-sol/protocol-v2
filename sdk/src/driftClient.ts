@@ -12952,6 +12952,31 @@ export class DriftClient {
 		return ixs;
 	}
 
+	public async getEmitUserTradingSummaryIx(
+		user: PublicKey
+	): Promise<TransactionInstruction> {
+		return await this.program.methods
+			.emitUserTradingSummary()
+			.accounts({
+				user: user,
+				authority: this.authority,
+			})
+			.instruction();
+	}
+
+	public async emitUserTradingSummary(
+		user: PublicKey
+	): Promise<TransactionSignature> {
+		const { txSig } = await this.sendTransaction(
+			await this.buildTransaction(
+				await this.getEmitUserTradingSummaryIx(user),
+				undefined
+			)
+		);
+
+		return txSig;
+	}
+
 	/**
 	 * Below here are the transaction sending functions
 	 */

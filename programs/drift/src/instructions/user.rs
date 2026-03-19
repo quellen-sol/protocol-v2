@@ -65,6 +65,7 @@ use crate::state::events::emit_stack;
 use crate::state::events::OrderAction;
 use crate::state::events::OrderActionRecord;
 use crate::state::events::OrderRecord;
+use crate::state::events::UserTradingSummaryRecord;
 use crate::state::events::{
     DepositDirection, DepositExplanation, DepositRecord, FuelSeasonRecord, FuelSweepRecord,
     NewUserRecord, OrderActionExplanation, SwapRecord,
@@ -4467,6 +4468,28 @@ pub fn handle_end_swap<'c: 'info, 'info>(
     Ok(())
 }
 
+pub fn handle_emit_user_trading_summary<'c: 'info, 'info>(
+    ctx: Context<'_, '_, 'c, 'info, EmitUserTradingSummary<'info>>,
+) -> Result<()> {
+    let user = ctx.accounts.user.load()?;
+    let authority = ctx.accounts.authority.key();
+    let user_open_order_count = user.open_orders;
+    let Clock {
+        slot,
+        unix_timestamp: ts,
+        ..
+    } = Clock::get()?;
+
+    emit!(UserTradingSummaryRecord {
+        ts,
+        slot,
+        authority,
+        open_order_count: user_open_order_count,
+    });
+
+    Ok(())
+}
+
 #[derive(Accounts)]
 #[instruction(
     sub_account_id: u16,
@@ -5311,4 +5334,13 @@ pub struct ChangeApprovedBuilder<'info> {
     #[account(mut)]
     pub payer: Signer<'info>,
     pub system_program: Program<'info, System>,
+}
+
+#[derive(Accounts)]
+pub struct EmitUserTradingSummary<'info> {
+    #[account(constraint = can_sign_for_user(&user, &authority)?)]
+    pub user: AccountLoader<'info, User>,
+
+    #[account()]
+    pub authority: Signer<'info>,
 }

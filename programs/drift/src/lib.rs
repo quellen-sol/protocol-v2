@@ -2236,6 +2236,12 @@ pub mod drift {
     ) -> Result<()> {
         handle_settle_perp_to_lp_pool(ctx)
     }
+
+    pub fn emit_user_trading_summary<'c: 'info, 'info>(
+        ctx: Context<'_, '_, 'c, 'info, EmitUserTradingSummary<'info>>,
+    ) -> Result<()> {
+        handle_emit_user_trading_summary(ctx)
+    }
 }
 
 #[cfg(not(feature = "no-entrypoint"))]

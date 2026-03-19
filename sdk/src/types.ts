@@ -832,6 +832,13 @@ export type LPBorrowLendDepositRecord = {
 	lpPool: PublicKey;
 };
 
+export type UserTradingSummaryRecord = {
+	ts: BN;
+	slot: BN;
+	authority: PublicKey;
+	open_order_count: number;
+};
+
 export type StateAccount = {
 	admin: PublicKey;
 	exchangeStatus: number;

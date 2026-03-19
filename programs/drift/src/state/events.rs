@@ -919,3 +919,15 @@ pub struct LPBorrowLendDepositRecord {
 impl Size for LPBorrowLendDepositRecord {
     const SIZE: usize = 104;
 }
+
+#[event]
+pub struct UserTradingSummaryRecord {
+    pub ts: i64,
+    pub slot: u64,
+    pub authority: Pubkey,
+    pub open_order_count: u8,
+}
+
+impl Size for UserTradingSummaryRecord {
+    const SIZE: usize = 49;
+}

@@ -34,6 +34,7 @@ test_files=(
   deleteInitializedSpotMarket.ts
   depositIntoSpotMarketVault.ts
   driftClient.ts
+  emitUserTradingSummary.ts
   fillSpot.ts
   highLeverageMode.ts
   ifRebalance.ts
