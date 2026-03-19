@@ -9,8 +9,9 @@ fi
 export ANCHOR_WALLET=~/.config/solana/id.json
 
 test_files=(
-	scaleOrders.ts
-	order.ts
+	# scaleOrders.ts
+	# order.ts
+  emitUserTradingSummary.ts
 )
 
 for test_file in ${test_files[@]}; do

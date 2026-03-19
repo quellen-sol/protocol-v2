@@ -67,7 +67,7 @@ use crate::state::events::OrderActionRecord;
 use crate::state::events::OrderRecord;
 use crate::state::events::{
     DepositDirection, DepositExplanation, DepositRecord, FuelSeasonRecord, FuelSweepRecord,
-    NewUserRecord, OrderActionExplanation, SwapRecord,
+    NewUserRecord, OrderActionExplanation, SwapRecord, UserTradingSummaryRecord,
 };
 use crate::state::fill_mode::FillMode;
 use crate::state::fulfillment_params::drift::MatchFulfillmentParams;
@@ -4467,6 +4467,33 @@ pub fn handle_end_swap<'c: 'info, 'info>(
     Ok(())
 }
 
+pub fn handle_emit_user_trading_summary<'c: 'info, 'info>(
+    ctx: Context<'_, '_, 'c, 'info, EmitUserTradingSummary<'info>>,
+) -> Result<()> {
+    let user = ctx.accounts.user.load()?;
+    let authority = ctx.accounts.authority.key();
+    let open_order_count = user.open_orders;
+    let settled_perp_pnl = user.settled_perp_pnl;
+    let cumulative_spot_fees = user.cumulative_spot_fees;
+    let status = user.status;
+
+    let clock = Clock::get()?;
+    let ts = clock.unix_timestamp;
+    let slot = clock.slot;
+
+    emit!(UserTradingSummaryRecord {
+        ts,
+        slot,
+        authority,
+        open_order_count,
+        settled_perp_pnl,
+        cumulative_spot_fees,
+        status
+    });
+
+    Ok(())
+}
+
 #[derive(Accounts)]
 #[instruction(
     sub_account_id: u16,
@@ -5311,4 +5338,13 @@ pub struct ChangeApprovedBuilder<'info> {
     #[account(mut)]
     pub payer: Signer<'info>,
     pub system_program: Program<'info, System>,
+}
+
+#[derive(Accounts)]
+pub struct EmitUserTradingSummary<'info> {
+    #[account(constraint = can_sign_for_user(&user, &authority)?)]
+    pub user: AccountLoader<'info, User>,
+
+    #[account()]
+    pub authority: Signer<'info>,
 }

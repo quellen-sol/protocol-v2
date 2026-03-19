@@ -2243,6 +2243,12 @@ pub mod drift {
     ) -> Result<()> {
         handle_update_perp_market_config(ctx, market_config)
     }
+
+    pub fn emit_user_trading_summary<'c: 'info, 'info>(
+        ctx: Context<'_, '_, 'c, 'info, EmitUserTradingSummary<'info>>,
+    ) -> Result<()> {
+        handle_emit_user_trading_summary(ctx)
+    }
 }
 
 #[cfg(not(feature = "no-entrypoint"))]

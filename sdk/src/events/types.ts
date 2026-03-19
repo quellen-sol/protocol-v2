@@ -25,6 +25,7 @@ import {
 	LPSettleRecord,
 	LPSwapRecord,
 	LPBorrowLendDepositRecord,
+	UserTradingSummaryRecord,
 } from '../types';
 import { EventEmitter } from 'events';
 
@@ -68,6 +69,7 @@ export const DefaultEventSubscriptionOptions: EventSubscriptionOptions = {
 		'LPMintRedeemRecord',
 		'LPSettleRecord',
 		'LPSwapRecord',
+		'UserTradingSummaryRecord',
 	],
 	maxEventsPerType: 4096,
 	orderBy: 'blockchain',
@@ -120,6 +122,7 @@ export type EventMap = {
 	LPSettleRecord: Event<LPSettleRecord>;
 	LPMintRedeemRecord: Event<LPMintRedeemRecord>;
 	LPSwapRecord: Event<LPSwapRecord>;
+	UserTradingSummaryRecord: Event<UserTradingSummaryRecord>;
 };
 
 export type EventType = keyof EventMap;
@@ -150,7 +153,8 @@ export type DriftEvent =
 	| Event<LPMintRedeemRecord>
 	| Event<LPSwapRecord>
 	| Event<LPBorrowLendDepositRecord>
-	| Event<CuUsage>;
+	| Event<CuUsage>
+	| Event<UserTradingSummaryRecord>;
 
 export interface EventSubscriberEvents {
 	newEvent: (event: WrappedEvent<EventType>) => void;
